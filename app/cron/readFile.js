@@ -1,10 +1,11 @@
-const fs = require("fs");
+const xlsx = require("xlsx");
 const path = require("path");
+const { connect } = require("../db/mongoose");
+const userModel = require("../models/user.model");
 
 const filPath = path.join(__dirname, "../upload/Node Task.xlsx");
 
-const xlsx = require("xlsx");
-const userModel = require("../models/user.model");
+connect();
 
 const workbook = xlsx.readFile(filPath);
 let workbook_sheet = workbook.SheetNames;
@@ -16,16 +17,16 @@ const saveUser = async () => {
     const users = await userModel.insertMany(workbook_response);
 
     //* if the excel data is not clean and the key names ar enot well structured in the excel
-    for (let i = 0; i < workbook_response.length; i++) {
-      var user = new userModel({
-        name: workbook_response[0].Name,
-        email: workbook_response[0]["Email ID"],
-        contact_no: workbook_response[0].Mobile,
-        address: workbook_response[0].Address,
-      });
+    // for (let i = 0; i < workbook_response.length; i++) {
+    //   var user = new userModel({
+    //     name: workbook_response[0].Name,
+    //     email: workbook_response[0]["Email ID"],
+    //     contact_no: workbook_response[0].Mobile,
+    //     address: workbook_response[0].Address,
+    //   });
 
-      await user.save();
-    }
+    //   await user.save();
+    // }
 
     console.log("data inserted successfully");
   } catch (error) {
