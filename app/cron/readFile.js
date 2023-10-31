@@ -4,12 +4,11 @@ const { connect } = require("../db/mongoose");
 const userModel = require("../models/user.model");
 
 const filPath = path.join(__dirname, "../upload/Node Task.xlsx");
-
 connect();
 
 const workbook = xlsx.readFile(filPath);
-let workbook_sheet = workbook.SheetNames;
-let workbook_response = xlsx.utils.sheet_to_json(workbook.Sheets[workbook_sheet[0]]);
+const workbook_sheet = workbook.SheetNames;
+const workbook_response = xlsx.utils.sheet_to_json(workbook.Sheets[workbook_sheet[0]]);
 
 const saveUser = async () => {
   try {
