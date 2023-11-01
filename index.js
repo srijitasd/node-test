@@ -1,7 +1,9 @@
+const cron = require("node-cron");
 const express = require("express");
-const { connect } = require("./app/db/mongoose");
-
 const multer = require("multer");
+
+const { connect } = require("./app/db/mongoose");
+const { userCron } = require("./app/cron/readFile");
 
 connect();
 
@@ -24,6 +26,10 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage });
+
+cron.schedule("* * */23 * * *", () => {
+  userCron();
+});
 
 App.post("/upload", upload.single("file"), (req, res) => {
   try {
