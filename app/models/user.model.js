@@ -12,22 +12,30 @@ const userSchema = new mongoose.Schema(
     },
     contact_no: { type: String },
     address: { type: String },
+    country: { type: String },
     status: { type: String },
     errorMsg: { type: String, default: "" },
   },
   { timestamps: true }
 );
 
-userSchema.pre("save", function () {
+userSchema.pre("insertMany", function (next, docs) {
   const mandatoryFields = ["name", "contact_no", "email", "address"];
-  let errorFields = [];
 
-  mandatoryFields.forEach((key) => {
-    this[key] == "" && errorFields.push(key);
+  docs.forEach((doc) => {
+    let errorFields = [];
+
+    mandatoryFields.forEach((key) => {
+      doc[key] == "" && errorFields.push(key);
+    });
+
+    doc.status = errorFields.length === 0 ? "Inactive" : "Active";
+    doc.errorMsg = errorFields.length > 0 ? `${errorFields.toString()} fields are missing` : "";
+
+    console.log(doc);
   });
 
-  this.status = errorFields.length === 0 ? "Inactive" : "Active";
-  this.errorMsg = errorFields.length > 0 && `${errorFields.toString} fields are missing`;
+  next();
 });
 
 const userModel = mongoose.model("User", userSchema);
